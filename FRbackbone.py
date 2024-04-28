@@ -70,8 +70,8 @@ class IBasicBlock(nn.Module):
 class IResNet(nn.Module):
     fc_scale = 7 * 7
     def __init__(self,
-                 block, layers, dropout=0, num_features=512, zero_init_residual=False,
-                 groups=1, width_per_group=64, replace_stride_with_dilation=None, fp16=False):
+                 block, layers, dropout=0, num_classes=512, zero_init_residual=False,
+                 groups=1, width_per_group=64, replace_stride_with_dilation=None, fp16=False, **kwargs):
         super(IResNet, self).__init__()
         self.extra_gflops = 0.0
         self.fp16 = fp16
@@ -105,8 +105,8 @@ class IResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.bn2 = nn.BatchNorm2d(512 * block.expansion, eps=1e-05,)
         self.dropout = nn.Dropout(p=dropout, inplace=True)
-        self.fc = nn.Linear(512 * block.expansion * self.fc_scale, num_features)
-        self.features = nn.BatchNorm1d(num_features, eps=1e-05)
+        self.fc = nn.Linear(512 * block.expansion * self.fc_scale, num_classes)
+        self.features = nn.BatchNorm1d(num_classes, eps=1e-05)
         nn.init.constant_(self.features.weight, 1.0)
         self.features.weight.requires_grad = False
 
@@ -195,3 +195,25 @@ def iresnet100(pretrained=False, progress=True, **kwargs):
 def iresnet200(pretrained=False, progress=True, **kwargs):
     return _iresnet('iresnet200', IBasicBlock, [6, 26, 60, 6], pretrained,
                     progress, **kwargs)
+
+def get_model(**kwargs):
+    if kwargs['name'] == "iresnet18":
+        return iresnet18(**kwargs)
+    elif kwargs['name'] == "iresnet34":
+        return iresnet34(**kwargs)
+    elif kwargs['name'] == "iresnet50":
+        return iresnet50(**kwargs)
+    elif kwargs['name'] == "iresnet100":
+        return iresnet100(**kwargs)
+    elif kwargs['name'] == "iresnet200":
+        return iresnet200(**kwargs)
+    elif kwargs['name'] == "resnet18":
+        return resnet18(**kwargs)
+    elif kwargs['name'] == "resnet50":
+        return resnet50(**kwargs)
+    elif kwargs['name'] == "resnet101":
+        return resnet101(**kwargs)
+    elif kwargs['name'] == "resnet152":
+        return resnet152(**kwargs)
+    else:
+        raise ValueError(f"Unknown model name {kwargs['name']}")
