@@ -3,8 +3,7 @@ device: cuda
 
 dataloader: {
     mode: 11N,
-    root_path: D:/data/face/archive,
-    description: D:/data/face/archive/casia-webface.txt,
+    description: D:/data/face/archive/description.txt,
     neg_batch_size: 63,
 }
 augmentation:

@@ -56,6 +56,7 @@ info_list = ["Start training\n",]
 with open(config_path, "r") as f:
     info_list.append(f.read())
 logging.info("".join(info_list))
+logging.info(f"Real device: {device}")
 
 for epoch in range(args.epochs):
     model.train()

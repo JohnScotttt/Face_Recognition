@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 class NegativeDataset(Dataset):
-    def __init__(self, root_path, description, transforms=None):
+    def __init__(self, description, transforms=None):
         self.transforms = transforms
         self.images_path = []
         self.labels = []
@@ -17,7 +17,7 @@ class NegativeDataset(Dataset):
         for l in lines:
             words = l.rstrip('\n').split('\t')
             try:
-                self.images_path.append(os.path.join(root_path, words[1]))
+                self.images_path.append(os.path.join(words[1]))
                 self.labels.append(int(words[0]))
                 if int(words[0]) > self.max_label:
                     self.max_label = int(words[0])
@@ -34,7 +34,7 @@ class NegativeDataset(Dataset):
         return len(self.labels)
 
 class PositiveDataset(Dataset):
-    def __init__(self, root_path, description, transforms=None):
+    def __init__(self, description, transforms=None):
         self.transforms = transforms
         self.images_path = {}
         with open(description) as f:
@@ -44,7 +44,7 @@ class PositiveDataset(Dataset):
             try:
                 if self.images_path.get(int(words[0])) is None:
                     self.images_path[int(words[0])] = []
-                self.images_path[int(words[0])].append(os.path.join(root_path, words[1]))
+                self.images_path[int(words[0])].append(os.path.join(words[1]))
             except:
                 pass
 
@@ -65,9 +65,9 @@ class PositiveDataset(Dataset):
         return len(self.images_path)
     
 class FRDataset:
-    def __init__(self, root_path, description, transforms=None, **kwargs):
-        self.pos_dataset = PositiveDataset(root_path, description, transforms)
-        self.neg_dataset = NegativeDataset(root_path, description, transforms)
+    def __init__(self, description, transforms=None, **kwargs):
+        self.pos_dataset = PositiveDataset(description, transforms)
+        self.neg_dataset = NegativeDataset(description, transforms)
 
 class FRDataloader(DataLoader):
     def __init__(self, dataset, neg_batch_size, shuffle, **kwargs):
