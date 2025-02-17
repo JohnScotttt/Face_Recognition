@@ -3,6 +3,7 @@ import datetime
 import logging
 import math
 import os
+import sys
 
 import cv2
 import torch
@@ -14,9 +15,11 @@ from tqdm import tqdm
 
 import FRbackbone
 import FRloss
-from FRdata import get_dataloader, get_dataset
+from FRdata.FR11Ndata import FRdataset
 
-config_path = "config/cwb_10e_11N_nbs63_ir50_f512_ArcCE_s64_m5e-1_gpu.yml"
+if len(sys.argv) != 2:
+    raise ValueError("Please input the path of the config file")
+config_path = sys.argv[1]
 
 cfg = yaml.safe_load(open(config_path, "r"))
 args = argparse.Namespace()
@@ -33,8 +36,8 @@ for ways in args.augmentation:
     augmentation.append(eval(ways))
 augmentation = transforms.Compose(augmentation)
 
-FRDS = get_dataset(**args.dataloader, transforms=augmentation)
-FRDL = get_dataloader(**args.dataloader, dataset=FRDS, shuffle=True)
+FRDS = FRdataset(**args.dataloader, transforms=augmentation)
+FRDL = DataLoader(FRDS, batch_size=args.batch_size, shuffle=True)
 
 model = FRbackbone.get_model(**args.model).to(device)
 if args.load_model is not None:
@@ -62,19 +65,13 @@ for epoch in range(args.epochs):
     model.train()
     train_loss = 0
     bar = tqdm(FRDL)
-    for counter, (batch, labels) in enumerate(bar):
-        flag = False
-        batch = batch.to(device)
-        labels = labels.to(device)
-        for i in range(2, len(labels)):
-            if labels[i] == labels[0]:
-                flag = True
-                break
-        if flag:
-            continue
+    for counter, batch in enumerate(bar):
+        batch = torch.stack(batch).permute(1, 0, 2, 3, 4).contiguous()
+        bs, sbs, c, h, w = batch.shape
+        batch = batch.to(device).view(bs * sbs, c, h, w)
         out_batch = model(batch)
-        out_batch_tem = out_batch
-        label = torch.zeros(1, dtype=torch.long).cuda()
+        out_batch_tem = out_batch.view(bs, sbs, -1)
+        label = torch.zeros(bs, dtype=torch.long).cuda()
         loss = loss_fn(out_batch_tem, label)
         if math.isnan(loss.item()):
             logging.error(f"Epoch {epoch}/{args.epochs} Batch {counter} Loss is nan")

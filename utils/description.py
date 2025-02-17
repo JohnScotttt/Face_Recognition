@@ -14,10 +14,7 @@ def discription(data_root_path, save_path):
     f.close()
 
 if __name__ == "__main__":
-    args = sys.argv
-    if len(args) == 1:
+    if len(sys.argv) != 3:
         print("Required parameter missing")
     else:
-        data_root_path = args[1]
-        save_path = args[2]
-        discription(data_root_path, save_path)
+        discription(sys.argv[1], sys.argv[2])

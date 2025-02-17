@@ -26,16 +26,16 @@ class FR11NArcCELoss(nn.Module):
         self.mm = math.sin(math.pi - margin) * margin
 
     def forward(self, batch, label):
-        query = batch[0].view(1, -1)
-        key = batch[1:]
-        cosine = torch.matmul(F.normalize(query), F.normalize(key.T))
+        query = batch[:, 0, :].unsqueeze(1)
+        key = batch[:, 1:, :]
+        cosine = torch.matmul(F.normalize(query), F.normalize(key.transpose(1, 2)))
         sine = ((1.0 - cosine.pow(2)).clamp(0, 1)).sqrt()
         phi = cosine * self.cos_m - sine * self.sin_m
         phi = torch.where(cosine > self.th, phi, cosine - self.mm)
         output = cosine * 1.0
         batch_size = len(output)
         output[range(batch_size), label] = phi[range(batch_size), label]
-        logits = output * self.s
+        logits = (output * self.s).squeeze(1)
         return nn.CrossEntropyLoss()(logits, label)
 
 def get_loss_fn(**kwargs):
