@@ -37,7 +37,7 @@ for ways in args.augmentation:
 augmentation = transforms.Compose(augmentation)
 
 FRDS = FRdataset(**args.dataloader, transforms=augmentation)
-FRDL = DataLoader(FRDS, batch_size=args.batch_size, shuffle=True)
+FRDL = DataLoader(FRDS, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
 
 model = FRbackbone.get_model(**args.model).to(device)
 if args.load_model is not None:
