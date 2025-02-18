@@ -48,12 +48,17 @@ optimizer = torch.optim.AdamW(model.parameters(),
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, args.scheduler)
 
 if args.log:
+    if not os.path.exists(args.log_path):
+        os.makedirs(args.log_path)
     current_time = datetime.datetime.now()
     formatted_time = current_time.strftime("%Y-%m-%d-%H%M%S")
     log_file_name = os.path.join(args.log_path, f"train{formatted_time}.log")
     logging.basicConfig(filename=log_file_name, filemode="w",
                         format="%(asctime)s %(name)s:%(levelname)s:%(message)s",
                         datefmt="%Y-%m-%d %H:%M:%S", level=logging.INFO)
+    
+if not os.path.exists(args.save_path):
+    os.makedirs(args.save_path)
 
 info_list = ["Start training\n",]
 with open(config_path, "r") as f:
