@@ -74,13 +74,13 @@ for epoch in range(args.epochs):
         label = torch.zeros(bs, dtype=torch.long).cuda()
         loss = loss_fn(out_batch_tem, label)
         if math.isnan(loss.item()):
-            logging.error(f"Epoch {epoch}/{args.epochs} Batch {counter} Loss is nan")
+            logging.error(f"Epoch {epoch+1}/{args.epochs} Batch {counter} Loss is nan")
             break
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         if args.log and counter % args.log_interval == 0:
-            logging.info(f"Epoch {epoch}/{args.epochs} Batch {counter} Loss {loss.item()}")
-        bar.set_description(f"Epoch {epoch}/{args.epochs} Loss {loss.item():.4f}")
+            logging.info(f"Epoch {epoch+1}/{args.epochs} Batch {counter} Loss {loss.item()}")
+        bar.set_description(f"Epoch {epoch+1}/{args.epochs} Loss {loss.item():.4f}")
     scheduler.step()
-    torch.save(model.state_dict(), os.path.join(args.save_path, f"{formatted_time}epoch_{epoch}.pth"))
+    torch.save(model.state_dict(), os.path.join(args.save_path, f"{formatted_time}epoch_{epoch+1}.pth"))
