@@ -11,7 +11,7 @@ model: {
     name: iresnet50,
     num_classes: 512,
 }
-load_model:  # Do not fill if no model to load
+load_model: baseline.pth # Do not fill if no model to load
 loss_fn: {
     name: FR11NArcCELoss,
     s: 64,

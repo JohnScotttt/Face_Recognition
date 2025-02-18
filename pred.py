@@ -1,4 +1,5 @@
 import sys
+import os
 import torch
 import torch.nn as nn
 import cv2
@@ -12,6 +13,19 @@ def predict(cfg_path, img1_path, img2_path):
     cfg = argparse.Namespace()
     for key in cfg_raw:
         setattr(cfg, key, cfg_raw[key])
+
+    if cfg.load_model == "baseline.pth" and not os.path.exists("baseline.pth"):
+        import requests
+        from tqdm import tqdm
+
+        url = "https://github.com/JohnScotttt/Face_Recognition/releases/download/v2.0/baseline.pth"
+        response = requests.get(url, stream=True)
+        with open('baseline.pth', 'wb') as file:
+            total_size = int(response.headers.get('content-length', 0))
+            with tqdm(total=total_size, unit='B', unit_scale=True) as bar:
+                for data in response.iter_content(chunk_size=1024):
+                    file.write(data)
+                    bar.update(len(data))
 
     model = FRbackbone.get_model(**cfg.model).to(cfg.device)
     model.load_state_dict(torch.load(cfg.load_model))
