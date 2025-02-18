@@ -6,6 +6,16 @@
 
 ## usage
 
+### environment
+
+Python版本推荐使用3.10，使用以下命令安装基础依赖库
+
+```
+pip install -r requirement.txt
+```
+
+自行选择安装适合版本的PyTorch。
+
 ### train
 
 1. 使用`utils/description.py`对数据集生成描述文件，每个数据集只要生成一次即可
@@ -24,13 +34,17 @@
 
 ### predict
 
-使用训练好的pth进行预测，运行`pred.py`进行预测
+使用训练好的pth进行预测，把pth文件路径添加到load_model后面，运行`pred.py`进行预测
 
 ```
 python pred.py YAML IMG1 IMG2
 ```
 
 其中YAML要与训练时的保持一致，IMG1和IMG2就是要判断的两张图片。
+
+### config
+
+config文件使用YAML格式，格式参考`config`下的demo yml文件
 
 ## 核心内容
 
