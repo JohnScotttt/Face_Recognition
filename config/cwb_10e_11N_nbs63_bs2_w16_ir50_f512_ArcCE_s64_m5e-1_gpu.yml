@@ -2,7 +2,7 @@ dataset: casia-webface
 device: cuda
 
 dataloader: {
-    description: D:/data/face/archive/description.txt,
+    description: description.txt,
     neg_batch_size: 63,
 }
 augmentation:
@@ -29,6 +29,6 @@ scheduler: {
 }
 
 log: True
-log_path: D:/repos/Face_Recognition/logs
+log_path: logs/
 log_interval: 1 
-save_path: D:/repos/Face_Recognition/models
+save_path: models/
