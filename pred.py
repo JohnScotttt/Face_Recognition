@@ -1,12 +1,15 @@
-import sys
+import argparse
 import os
+import sys
+
+import cv2
 import torch
 import torch.nn as nn
-import cv2
-import FRbackbone
 import yaml
-import argparse
 from torchvision import transforms
+
+import FRbackbone
+
 
 def predict(cfg_path, img1_path, img2_path):
     cfg_raw = yaml.safe_load(open(cfg_path, "r"))

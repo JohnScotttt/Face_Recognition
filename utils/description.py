@@ -1,7 +1,9 @@
 import os
-import sys
 import shutil
+import sys
+
 from tqdm import tqdm
+
 
 def discription(data_root_path, save_path):
     f = open(os.path.join(save_path, "description.txt"), "w")

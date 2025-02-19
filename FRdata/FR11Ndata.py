@@ -1,11 +1,14 @@
-import os
 import itertools
-import cv2
+import os
 import random
+
+import cv2
 import torch
 from torch.utils.data import DataLoader, Dataset
 from torch.xpu import device
-from tqdm import  tqdm
+from tqdm import tqdm
+
+
 class FRdataset(Dataset):
     def __init__(self, description, neg_batch_size, transforms=None, **kwargs):
         self.transforms = transforms
